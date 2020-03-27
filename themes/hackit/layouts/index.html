@@ -1,0 +1,30 @@
+{{- define "content" -}}
+    <div class="page home">
+        {{ $var := "Hugo Page" }}
+        {{ if .IsHome }}
+        {{ $var = "Hugo Home" }}
+        {{ end }}
+        Var is {{ $var }}
+        <h1>This is a test</h1>
+
+        {{- /* Posts */ -}}
+        {{- if ne .Site.Params.home.posts.enable false -}}
+            {{- /* Paginate */ -}}
+            {{- $paginator := where .Site.RegularPages "Type" "posts" -}}
+            {{- if ne .Site.Params.home.posts.mode.defaultHiddenFromHomePage false -}}
+                {{- $paginator = where $paginator "Params.hiddenfromhomepage" "!=" true -}}
+            {{- else -}}
+                {{- $paginator = where $paginator "Params.hiddenfromhomepage" false -}}
+            {{- end -}}
+            {{- with .Site.Params.home.posts.paginate -}}
+                {{- $paginator = $.Paginate $paginator . -}}
+            {{- else -}}
+                {{- $paginator = $.Paginate $paginator -}}
+            {{- end -}}
+            {{- range $paginator.Pages -}}
+                {{- .Render "summary" -}}
+            {{- end -}}
+            {{- partial "paginator.html" . -}}
+        {{- end -}}
+    </div>
+{{- end -}}
